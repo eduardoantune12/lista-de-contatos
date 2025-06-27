@@ -8,7 +8,7 @@ function App() {
   return (
     <Provider store={store}>
       <GlobalStyle />
-      <div style={{ maxWidth: 600, margin: '40px auto', background: '#fff', padding: '30px', borderRadius: 8 }}>
+      <div style={{ maxWidth: '50vw', margin: '40px auto', background: '#fff', padding: '30px', borderRadius: 8 }}>
         <h2>Lista de Contatos</h2>
         <ContactList />
       </div>

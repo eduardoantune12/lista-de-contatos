@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { addContact, editContact } from '../redux/contactsSlice';
+import { Form, Input, Button } from '../styles/FormStyle';
 
-const Form = styled.form`
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-`;
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
 
-const Input = styled.input`
-    padding: 8px;
-`;
+function formatPhone(value) {
+    value = value.replace(/\D/g, '');
+    value = value.slice(0, 11);
 
-const Button = styled.button`
-    padding: 8px 16px;
-    background: #007bff;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-`;
+    if (value.length > 6) {
+        return `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+    } else if (value.length > 2) {
+        return `(${value.slice(0, 2)}) ${value.slice(2)}`;
+    } else if (value.length > 0) {
+        return `(${value}`;
+    }
+    return value;
+}
 
 const ContactForm = ({ editData, onFinishEdit }) => {
     const [contact, setContact] = useState({ nome: '', email: '', telefone: '' });
@@ -30,11 +30,27 @@ const ContactForm = ({ editData, onFinishEdit }) => {
     }, [editData]);
 
     const handleChange = (e) => {
-        setContact({ ...contact, [e.target.name]: e.target.value });
+        let { name, value } = e.target;
+        if (name === "telefone") {
+            value = formatPhone(value);
+        }
+        setContact({ ...contact, [name]: value });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (!isValidEmail(contact.email)) {
+            alert('Digite um email válido!');
+            return;
+        }
+
+        const cleanPhone = contact.telefone.replace(/\D/g, '');
+        if (cleanPhone.length !== 11) {
+            alert('O telefone deve conter 11 números (incluindo DDD).');
+            return;
+        }
+
         if (editData) {
             dispatch(editContact({ id: editData.id, updatedContact: contact }));
             onFinishEdit();
@@ -59,6 +75,7 @@ const ContactForm = ({ editData, onFinishEdit }) => {
                 value={contact.email}
                 onChange={handleChange}
                 required
+                type="email"
             />
             <Input
                 name="telefone"
@@ -66,6 +83,7 @@ const ContactForm = ({ editData, onFinishEdit }) => {
                 value={contact.telefone}
                 onChange={handleChange}
                 required
+                maxLength={15}
             />
             <Button type="submit">{editData ? 'Salvar' : 'Adicionar'}</Button>
         </Form>

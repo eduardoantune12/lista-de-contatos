@@ -1,26 +1,14 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import styled from 'styled-components';
 import { removeContact } from '../redux/contactsSlice';
 import ContactForm from './ContactForm';
-
-const List = styled.ul`
-    list-style: none;
-    padding: 0;
-`;
-
-const Item = styled.li`
-    background: #fff;
-    margin-bottom: 10px;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-`;
-
-const Button = styled.button`
-    margin-left: 10px;
-`;
+import {
+    List,
+    Item,
+    ContactInfo,
+    ButtonGroup,
+    Button
+} from '../styles/ListStyle';
 
 const ContactList = () => {
     const contacts = useSelector(state => state.contacts);
@@ -33,13 +21,13 @@ const ContactList = () => {
             <List>
                 {contacts.map(contact => (
                     <Item key={contact.id}>
-                        <span>
-                            <strong>{contact.nome}</strong> | {contact.email} | {contact.telefone}
-                        </span>
-                        <span>
-                            <Button onClick={() => setEditData(contact)}>Editar</Button>
-                            <Button onClick={() => dispatch(removeContact(contact.id))}>Remover</Button>
-                        </span>
+                        <ContactInfo><strong>{contact.nome}</strong></ContactInfo>
+                        <ContactInfo>{contact.email}</ContactInfo>
+                        <ContactInfo>{contact.telefone}</ContactInfo>
+                        <ButtonGroup>
+                            <Button variant="edit" onClick={() => setEditData(contact)}>Editar</Button>
+                            <Button variant="remove" onClick={() => dispatch(removeContact(contact.id))}>Remover</Button>
+                        </ButtonGroup>
                     </Item>
                 ))}
             </List>
